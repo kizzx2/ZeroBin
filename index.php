@@ -8,6 +8,9 @@ if (version_compare(PHP_VERSION, '5.2.6') < 0) die('ZeroBin requires php 5.2.6 o
 require_once "lib/serversalt.php";
 require_once "lib/vizhash_gd_zero.php";
 
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] != 'https')
+    die('Use HTTPS');
+
 // In case stupid admin has left magic_quotes enabled in php.ini:
 if (get_magic_quotes_gpc())
 {
