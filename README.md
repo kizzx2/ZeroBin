@@ -1,3 +1,9 @@
+Forked from [ZeroBin](https://github.com/sebsauvage/ZeroBin) with image upload support ready to be dropped into Heroku.
+
+_Caveat: Use a service like Pingdom to keep the Heroku dyno alive otherwise your paste would be deleted._
+
+------------------------------------------------------------------------------
+
 ZeroBin 0.19 Alpha
 
 ==== THIS IS ALPHA SOFTWARE - USE AT YOUR OWN RISKS ====
