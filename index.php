@@ -175,6 +175,10 @@ if (!empty($_POST['data'])) // Create new paste/comment
     // Read additional meta-information.
     $meta=array();
 
+    // Read file type
+    if (!empty($_POST['type']))
+        $meta['type'] = $_POST['type'];
+
     // Read expiration date
     if (!empty($_POST['expire']))
     {

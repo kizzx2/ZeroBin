@@ -198,8 +198,16 @@ function displayMessages(key, comments) {
         showError('Could not decrypt data (Wrong key ?)');
         return;
     }
-    setElementText($('div#cleartext'), cleartext);
-    urls2links($('div#cleartext')); // Convert URLs to clickable links.
+
+    if(comments[0].meta.type && comments[0].meta.type.indexOf('image') == 0)
+    {
+      $('div#cleartext').html("<img src='" + cleartext + "' />");
+    }
+    else
+    {
+        setElementText($('div#cleartext'), cleartext);
+        urls2links($('div#cleartext')); // Convert URLs to clickable links.
+    }
 
     // comments[0] is the paste itself.
 
@@ -326,7 +334,7 @@ function send_comment(parentid) {
  */
 function send_data() {
     // Do not send if no data.
-    if ($('textarea#message').val().length == 0) {
+    if ($('textarea#message').val().length == 0 && $(':input#file').val().length == 0) {
         return;
     }
 
@@ -348,7 +356,12 @@ function send_data() {
                          opendiscussion: $('input#opendiscussion').is(':checked') ? 1 : 0,
                          syntaxcoloring: $('input#syntaxcoloring').is(':checked') ? 1 : 0
                        };
-    $.post(scriptLocation(), data_to_send, 'json')
+
+    var uploaded = null;
+
+    var cont = function()
+    {
+      $.post(scriptLocation(), data_to_send, 'json')
         .error(function() {
             showError('Data could not be sent (serveur error or not responding).');
         })
@@ -364,8 +377,15 @@ function send_data() {
                 $('div#pasteresult').show();
                 selectText('pasteurl'); // We pre-select the link so that the user only has to CTRL+C the link.
 
-                setElementText($('div#cleartext'), $('textarea#message').val());
-                urls2links($('div#cleartext'));
+                if(uploaded)
+                {
+                    $('div#cleartext').html("<img src='" + uploaded + "' />");
+                }
+                else
+                {
+                    setElementText($('div#cleartext'), $('textarea#message').val());
+                    urls2links($('div#cleartext'));
+                }
 
                 // FIXME: Add option to remove syntax highlighting ?
                 if ($('input#syntaxcoloring').is(':checked')) applySyntaxColoring();
@@ -379,6 +399,31 @@ function send_data() {
                 showError('Could not create paste.');
             }
         });
+    };
+
+    // Upload file
+    if($(':input#file').val().length > 0)
+    {
+      if(typeof(FileReader) == 'undefined')
+      {
+        alert("Your browser doesn't support HTML5 file upload");
+        return;
+      }
+
+      var f = $(':input#file')[0].files[0];
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        uploaded = e.target.result;
+        data_to_send.data = zeroCipher(randomkey, uploaded);
+        data_to_send.type = f.type;
+        cont();
+      };
+      reader.readAsDataURL(f);
+    }
+    else
+      cont();
+
 }
 
 
