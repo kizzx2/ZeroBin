@@ -418,10 +418,20 @@ $STATUS='';
 
 if (!empty($_GET['deletetoken']) && !empty($_GET['pasteid'])) // Delete an existing paste
 {
+    if(strpos($_SERVER['HTTP_USER_AGENT'], "Slackbot") !== false)
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . " 404 Not Found");
+        exit;
+    }
     list ($CIPHERDATA, $ERRORMESSAGE, $STATUS) = processPasteDelete($_GET['pasteid'],$_GET['deletetoken']);
 }
 else if (!empty($_SERVER['QUERY_STRING']))  // Return an existing paste.
 {
+    if(strpos($_SERVER['HTTP_USER_AGENT'], "Slackbot") !== false)
+    {
+        header($_SERVER['SERVER_PROTOCOL'] . " 404 Not Found");
+        exit;
+    }
     list ($CIPHERDATA, $ERRORMESSAGE, $STATUS) = processPasteFetch($_SERVER['QUERY_STRING']);    
 }
 
